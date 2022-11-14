@@ -41,11 +41,11 @@ class ApiController(val externalBooksApi: ExternalBooksApiProperties) {
     @PostMapping("/books")
     fun createBook(@RequestBody book: Book) = books.add(book)
 
-    @GetMapping("/externalBook")
-    fun externalBook(): Book {
+    @GetMapping("/externalBooks/{id}")
+    fun externalBook(@PathVariable id: String): Book {
         val client = HttpClient.newBuilder().build()
         val request = HttpRequest.newBuilder()
-            .uri(URI.create("${externalBooksApi.host}/books/1"))
+            .uri(URI.create("${externalBooksApi.host}/books/$id"))
             .build()
 
         val response = client.send(request, HttpResponse.BodyHandlers.ofString())
