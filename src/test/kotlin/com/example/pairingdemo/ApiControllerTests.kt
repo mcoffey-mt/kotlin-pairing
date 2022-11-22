@@ -35,7 +35,7 @@ class ApiControllerTests(@Autowired val mockMvc: MockMvc) : DescribeSpec({
                         .willReturn(WireMock.okJson(JSONObject(book).toString()))
                 )
             }
-            
+
             it("responds with 200 status") {
                 val result = mockMvc.perform(get("/externalBooks/$id")).andReturn()
 
@@ -48,6 +48,21 @@ class ApiControllerTests(@Autowired val mockMvc: MockMvc) : DescribeSpec({
                 JSONObject(result.response.contentAsString)["id"].shouldBe("$id")
                 JSONObject(result.response.contentAsString)["title"].shouldBe("The Batman")
                 JSONObject(result.response.contentAsString)["author"].shouldBe("Bruce Wayne")
+            }
+        }
+
+        describe("when an external book is not found") {
+            beforeTest {
+                externalBooksApi.stubFor(
+                    WireMock.get(WireMock.urlEqualTo("/books/$id"))
+                        .willReturn(WireMock.notFound())
+                )
+            }
+
+            it("responds with 404 status") {
+                val result = mockMvc.perform(get("/externalBooks/$id")).andReturn()
+
+                result.response.status.shouldBe(404)
             }
         }
     }

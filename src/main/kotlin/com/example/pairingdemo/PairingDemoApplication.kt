@@ -7,15 +7,14 @@ import org.apache.tomcat.util.json.JSONParser
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.runApplication
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.http.HttpStatus
+import org.springframework.web.bind.annotation.*
+import org.springframework.web.server.ResponseStatusException
 import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse
+
 
 @SpringBootApplication
 @EnableConfigurationProperties(ExternalBooksApiProperties::class)
@@ -49,6 +48,13 @@ class ApiController(val externalBooksApi: ExternalBooksApiProperties) {
             .build()
 
         val response = client.send(request, HttpResponse.BodyHandlers.ofString())
+
+        if (response.statusCode() == 404) {
+            throw ResponseStatusException(
+                HttpStatus.NOT_FOUND, "External book with the ID: ${id} was not found."
+            )
+        }
+
         val externalBook = JSONParser(response.body()).parseObject();
 
         var bookDTO = BookDTO(
