@@ -20,31 +20,35 @@ class ApiControllerTests(@Autowired val mockMvc: MockMvc) : DescribeSpec({
         val externalBooksApi = WireMockServer(9000)
         listener(WireMockListener(externalBooksApi, ListenerMode.PER_SPEC))
         val id = 1
-        val book = mapOf("id" to 1, "name" to "The Batman", "author" to "Bruce Wayne", "available" to true)
+        val book = mapOf("id" to id, "name" to "The Batman", "author" to "Bruce Wayne", "available" to true)
 
         beforeTest {
             externalBooksApi.start()
-
-            externalBooksApi.stubFor(
-                WireMock.get(WireMock.urlEqualTo("/books/$id"))
-                    .willReturn(WireMock.okJson(JSONObject(book).toString()))
-            )
         }
 
         afterTest { externalBooksApi.stop() }
 
-        it("responds with 200 status") {
-            val result = mockMvc.perform(get("/externalBooks/$id")).andReturn()
+        describe("when an external book is successfully retrieved") {
+            beforeTest {
+                externalBooksApi.stubFor(
+                    WireMock.get(WireMock.urlEqualTo("/books/$id"))
+                        .willReturn(WireMock.okJson(JSONObject(book).toString()))
+                )
+            }
+            
+            it("responds with 200 status") {
+                val result = mockMvc.perform(get("/externalBooks/$id")).andReturn()
 
-            result.response.status.shouldBe(200)
-        }
+                result.response.status.shouldBe(200)
+            }
 
-        it("returns a book with the matching ID") {
-            val result = mockMvc.perform(get("/externalBooks/$id")).andReturn()
+            it("returns a book with the matching ID") {
+                val result = mockMvc.perform(get("/externalBooks/$id")).andReturn()
 
-            JSONObject(result.response.contentAsString)["id"].shouldBe("$id")
-            JSONObject(result.response.contentAsString)["title"].shouldBe("The Batman")
-            JSONObject(result.response.contentAsString)["author"].shouldBe("Bruce Wayne")
+                JSONObject(result.response.contentAsString)["id"].shouldBe("$id")
+                JSONObject(result.response.contentAsString)["title"].shouldBe("The Batman")
+                JSONObject(result.response.contentAsString)["author"].shouldBe("Bruce Wayne")
+            }
         }
     }
 })
