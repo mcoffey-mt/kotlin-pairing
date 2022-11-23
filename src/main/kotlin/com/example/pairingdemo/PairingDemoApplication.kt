@@ -15,7 +15,6 @@ import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse
 
-
 @SpringBootApplication
 @EnableConfigurationProperties(ExternalBooksApiProperties::class)
 class PairingDemoApplication
@@ -51,7 +50,7 @@ class ApiController(val externalBooksApi: ExternalBooksApiProperties) {
 
         if (response.statusCode() == 404) {
             throw ResponseStatusException(
-                HttpStatus.NOT_FOUND, "External book with the ID: ${id} was not found."
+                HttpStatus.NOT_FOUND, "External book with the ID: $id was not found."
             )
         }
 
