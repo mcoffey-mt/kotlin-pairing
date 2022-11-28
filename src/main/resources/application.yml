@@ -1,0 +1,3 @@
+api:
+  external-books:
+    host: https://simple-books-api.glitch.me
