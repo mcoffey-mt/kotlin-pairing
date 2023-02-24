@@ -1,5 +1,5 @@
 # Kotlin Pairing
-Myself and Wen Ting have been doing some pairing on learning Kotlin, we decided to write a simple API.
+Myself and Ting have been doing some pairing on learning Kotlin, we decided to write a simple API.
 
 ### Next Steps/Ideas
 - Write some unit tests
